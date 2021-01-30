@@ -51,6 +51,7 @@ ngx_array_push(ngx_array_t *a)
     size_t       size;
     ngx_pool_t  *p;
 
+    /* 如果数组内存已满 */
     if (a->nelts == a->nalloc) {
 
         /* the array is full */
@@ -59,6 +60,7 @@ ngx_array_push(ngx_array_t *a)
 
         p = a->pool;
 
+        /* 数组的内存池中的最后一个，有空间用于新的分配*/
         if ((u_char *) a->elts + size == p->d.last
             && p->d.last + a->size <= p->d.end)
         {
@@ -71,6 +73,8 @@ ngx_array_push(ngx_array_t *a)
             a->nalloc++;
 
         } else {
+            /* 数组的内存池中的最后一个，没有有空间用于新的分配 
+            就重新申请一块 2倍原来size的空间 */
             /* allocate a new array */
 
             new = ngx_palloc(p, 2 * size);
